@@ -4,6 +4,8 @@ class AppColors {
   const AppColors._();
 
   static const primary = Color(0xFF17A398);
+  static const bg = Color(0xFF17130F);
+  static const orange = Color(0xFFE8642C);
   static const secondary = Color(0xFFE85D75);
   static const accent = Color(0xFFF6AE2D);
   static const background = Color(0xFFF7F8FA);
