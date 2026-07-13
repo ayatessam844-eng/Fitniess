@@ -1,4 +1,8 @@
+// onboarding_screen.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/theme/app_colors.dart';
 
 class OnboardingData {
   final String image, title, desc;
@@ -24,12 +28,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _controller = PageController();
   int _index = 0;
 
-  static const bg = Color(0xFF17130F);
-  static const orange = Color(0xFFE8642C);
+  // static const bg = Color(0xFF17130F);
+  // static const orange = Color(0xFFE8642C);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _next() {
     if (_index == onboardingPages.length - 1) {
-      // TODO: navigate to Login/Home
+      context.go('/auth/login'); // TODO adjust route
       return;
     }
     _controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
@@ -40,85 +50,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
+  void _skip() {
+    _controller.animateToPage(
+      onboardingPages.length - 1,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isLast = _index == onboardingPages.length - 1;
-
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: AppColors.bg,
       body: SafeArea(
         child: Stack(
           children: [
             PageView.builder(
               controller: _controller,
+              physics: const PageScrollPhysics(),
               itemCount: onboardingPages.length,
               onPageChanged: (i) => setState(() => _index = i),
-              itemBuilder: (_, i) => _Page(data: onboardingPages[i]),
-            ),
-
-            // Skip
-            if (!isLast)
-              Positioned(
-                top: 8,
-                right: 16,
-                child: TextButton(
-                  onPressed: () {}, // TODO: skip to last page / navigate away
-                  child: const Text('Skip', style: TextStyle(color: Colors.white70)),
-                ),
-              ),
-
-            // Dots + buttons
-            Positioned(
-              left: 20,
-              right: 20,
-              bottom: 20,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      onboardingPages.length,
-                          (i) => AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                        height: 6,
-                        width: _index == i ? 18 : 6,
-                        decoration: BoxDecoration(
-                          color: _index == i ? orange : Colors.white24,
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _index == 0
-                          ? const SizedBox(width: 80)
-                          : OutlinedButton(
-                        onPressed: _back,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.white38),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        ),
-                        child: const Text('Back'),
-                      ),
-                      ElevatedButton(
-                        onPressed: _next,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: orange,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
-                        ),
-                        child: Text(isLast ? 'DO IT' : 'Next'),
-                      ),
-                    ],
-                  ),
-                ],
+              itemBuilder: (_, i) => _Page(
+                data: onboardingPages[i],
+                index: _index,
+                total: onboardingPages.length,
+                onSkip: _skip,
+                onBack: _back,
+                onNext: _next,
               ),
             ),
           ],
@@ -130,38 +88,120 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
 class _Page extends StatelessWidget {
   final OnboardingData data;
-  const _Page({required this.data});
+  final int index, total;
+  final VoidCallback onSkip, onBack, onNext;
+
+  const _Page({
+    required this.data,
+    required this.index,
+    required this.total,
+    required this.onSkip,
+    required this.onBack,
+    required this.onNext,
+  });
+
+  static const orange = Color(0xFFE8642C);
 
   @override
   Widget build(BuildContext context) {
+    final isLast = index == total - 1;
+
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 50, 16, 140),
+      padding: const EdgeInsets.fromLTRB(16, 50, 16, 24),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: Stack(
           fit: StackFit.expand,
           children: [
+            // full-bleed background image
             Image.asset(data.image, fit: BoxFit.cover),
-            Positioned(
-              left: 0, right: 0, bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black87],
+
+            if (!isLast)
+              Positioned(
+                top: 12,
+                right: 12,
+                child: TextButton(
+                  onPressed: onSkip,
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.black38,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   ),
+                  child: const Text('Skip', style: TextStyle(color: Colors.white, fontSize: 12)),
                 ),
+              ),
+
+            // text block overlaid at bottom — solid background, no gradient
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                color: const Color(0xE6120E0B), // solid-ish dark bg, slight transparency
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(data.title,
-                        style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, height: 1.3)),
-                    const SizedBox(height: 8),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, height: 1.3)),
+                    const SizedBox(height: 6),
                     Text(data.desc,
-                        style: const TextStyle(color: Colors.white70, fontSize: 12, height: 1.4)),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white70, fontSize: 11.5, height: 1.4)),
+                    const SizedBox(height: 14),
+
+                    Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(
+                          total,
+                              (i) => AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            height: 5,
+                            width: index == i ? 16 : 5,
+                            decoration: BoxDecoration(
+                              color: index == i ? orange : Colors.white38,
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    Row(
+                      children: [
+                        if (index != 0) ...[
+                          OutlinedButton(
+                            onPressed: onBack,
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              side: const BorderSide(color: Colors.white54),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+                              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+                            ),
+                            child: const Text('Back', style: TextStyle(fontSize: 13)),
+                          ),
+                          const SizedBox(width: 12),
+                        ],
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: onNext,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: orange,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            child: Text(isLast ? 'DO IT' : 'Next', style: const TextStyle(fontSize: 13)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
