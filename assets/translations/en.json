@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "Fitness App"
+  },
+  "auth": {
+    "email": "Email",
+    "login": "Log in",
+    "login_failed": "Something went wrong",
+    "password": "Password",
+    "required": "{field} is required",
+    "subtitle": "Sign in to continue your training plan.",
+    "welcome": "Welcome",
+    "welcome_user": "Welcome, {name}"
+  },
+  "home": {
+    "logout": "Log out"
+  },
+  "onboarding": {
+    "get_started": "Get started",
+    "next": "Next",
+    "skip": "Skip",
+    "update_failed": "Unable to update onboarding"
+  }
+}

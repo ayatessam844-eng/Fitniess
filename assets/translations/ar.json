@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "تطبيق اللياقة"
+  },
+  "auth": {
+    "email": "البريد الإلكتروني",
+    "login": "تسجيل الدخول",
+    "login_failed": "حدث خطأ ما",
+    "password": "كلمة المرور",
+    "required": "{field} مطلوب",
+    "subtitle": "سجل الدخول لمتابعة خطة تدريبك.",
+    "welcome": "مرحبًا",
+    "welcome_user": "مرحبًا، {name}"
+  },
+  "home": {
+    "logout": "تسجيل الخروج"
+  },
+  "onboarding": {
+    "get_started": "ابدأ الآن",
+    "next": "التالي",
+    "skip": "تخطي",
+    "update_failed": "تعذر تحديث شاشة البداية"
+  }
+}
