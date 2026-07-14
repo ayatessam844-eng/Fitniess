@@ -1,17 +1,29 @@
-# fitnies
+# Fitness App 🏋️‍♂️
 
-A new Flutter project.
+Flutter fitness app — workout plans, AI coach, nutrition, and progress tracking.
 
-## Getting Started
+## Screenshots
 
-This project is a starting point for a Flutter application.
+![Fitness App Screens](./assets/screenshots/fitness_app_preview.png)
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- 🔐 Auth — Login / Register
+- 🏠 Home — Categories, Recommendations, Upcoming Workouts
+- 💪 Workout — Full Body / Chest / Arm / Shoulder / Back / Legs with sets & reps
+- 🍽️ Food Recommendation — Breakfast / Lunch / Dinner meal suggestions
+- 🤖 Smart Coach — AI chat assistant (Gemini)
+- 🎯 Goal Setup — Gain Weight / Lose Weight / Get Fitter / Gain Flexibility / Learn the Basics
+- 👤 Profile — Edit Profile, Change Password, Language, Security, Privacy Policy
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tech Stack
+
+- Flutter + Dart
+- Riverpod 2.x (state management, code generation)
+- Clean Architecture (data / domain / presentation)
+- Dio + Retrofit (networking)
+- Gemini API (Smart Coach)
+- go_router (navigation)
+- easy_localization (Arabic/English)
+
+## Architecture
