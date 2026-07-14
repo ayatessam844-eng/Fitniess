@@ -4,7 +4,7 @@ Flutter fitness app — workout plans, AI coach, nutrition, and progress trackin
 
 ## Screenshots
 
-![Fitness App Screens](./assets/screenshots/fitness_app_preview.png)
+![Fitness App Screens](./assets/images/fitness_app_preview.png)
 
 ## Features
 
