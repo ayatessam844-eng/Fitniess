@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fitnies/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:fitnies/features/auth/presentation/screens/login_screen.dart';
+import 'package:fitnies/features/auth/presentation/screens/register_screen.dart';
 import 'package:fitnies/features/onboarding/presentation/providers/onboarding_notifier.dart';
 import 'package:fitnies/features/onboarding/presentation/screens/onboarding_screen.dart';
-import 'package:fitnies/features/onboarding/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,14 +17,14 @@ GoRouter appRouter(AppRouterRef ref) {
   final onboardingState = ref.watch(onboardingNotifierProvider);
 
   return GoRouter(
-    initialLocation: SplashRoute.path,
+    initialLocation: OnboardingRoute.path,
     redirect: (context, state) {
       final location = state.matchedLocation;
-      final isSplash = location == SplashRoute.path;
       final isOnboarding = location == OnboardingRoute.path;
 
+      // still loading onboarding flag -> stay put, don't redirect yet
       if (onboardingState.isLoading || onboardingState.hasError) {
-        return isSplash ? null : SplashRoute.path;
+        return null;
       }
 
       final hasSeenOnboarding = onboardingState.valueOrNull ?? false;
@@ -33,28 +33,26 @@ GoRouter appRouter(AppRouterRef ref) {
       }
 
       final isLoggedIn = authState.valueOrNull != null;
-      final isLoggingIn = location == LoginRoute.path;
 
-      if (isSplash || isOnboarding) {
-        return isLoggedIn ? HomeRoute.path : LoginRoute.path;
-      }
+      // Routes that should be reachable WITHOUT being logged in
+      final isPublicRoute =
+          location == LoginRoute.path || location == RegisterRoute.path;
 
-      if (!isLoggedIn && !isLoggingIn) {
+      // if (isOnboarding) {
+      //   return isLoggedIn ? HomeRoute.path : LoginRoute.path;
+      // }
+
+      if (!isLoggedIn && !isPublicRoute) {
         return LoginRoute.path;
       }
 
-      if (isLoggedIn && isLoggingIn) {
-        return HomeRoute.path;
-      }
+      // if (isLoggedIn && isPublicRoute) {
+      //   return HomeRoute.path;
+      // }
 
       return null;
     },
     routes: [
-      GoRoute(
-        path: SplashRoute.path,
-        name: SplashRoute.name,
-        builder: (context, state) => const SplashScreen(),
-      ),
       GoRoute(
         path: OnboardingRoute.path,
         name: OnboardingRoute.name,
@@ -66,38 +64,38 @@ GoRouter appRouter(AppRouterRef ref) {
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
-        path: HomeRoute.path,
-        name: HomeRoute.name,
-        builder: (context, state) => const _AuthenticatedHomeScreen(),
+          path: RegisterRoute.path,
+          name: RegisterRoute.name,
+          builder: (context, state) => const RegisterScreen()
       ),
+      // GoRoute(
+      //   path: HomeRoute.path,
+      //   name: HomeRoute.name,
+      //   builder: (context, state) => const _AuthenticatedHomeScreen(),
+      // ),
     ],
   );
 }
 
-class SplashRoute {
-  const SplashRoute._();
-
-  static const path = '/splash';
-  static const name = 'splash';
-}
-
 class OnboardingRoute {
   const OnboardingRoute._();
-
   static const path = '/onboarding';
   static const name = 'onboarding';
 }
 
 class LoginRoute {
   const LoginRoute._();
-
   static const path = '/login';
   static const name = 'login';
+}
+class RegisterRoute{
+  const RegisterRoute._();
+  static const path = '/register';
+  static const name = 'register';
 }
 
 class HomeRoute {
   const HomeRoute._();
-
   static const path = '/';
   static const name = 'home';
 }

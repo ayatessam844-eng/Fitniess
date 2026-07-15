@@ -1,5 +1,7 @@
 abstract class AppRoutes {
   static const String login = "/login";
+  static const String register = "/register";
+  static const String home = "/home";
   static const String detailsMeal = '/detailsMeal';
   static const String exercise = "/exercise";
   static const String pTExercise = "/popular_to_exercise";
@@ -18,5 +20,4 @@ abstract class AppRoutes {
   static const String homeScreen = "/homeScreen";
   static const String goalScreen = "/goalScreen";
   static const String activityScreen = "/activityScreen";
-  static const String register = "/register";
 }
