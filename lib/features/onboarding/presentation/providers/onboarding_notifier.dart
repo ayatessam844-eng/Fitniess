@@ -4,6 +4,7 @@ import 'package:fitnies/core/usecase/usecase.dart';
 import 'package:fitnies/features/onboarding/presentation/providers/onboarding_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+
 part 'onboarding_notifier.g.dart';
 
 @riverpod
@@ -29,6 +30,7 @@ class OnboardingNotifier extends _$OnboardingNotifier {
       (_) => const AsyncData(true),
     );
   }
+
 }
 
 extension OnboardingFailureMessage on Object {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../features/auth/presentation/screens/register_screen.dart';
 import 'app_router.dart';
 import 'app_routes.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -42,7 +43,7 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(path: AppRoutes.onboarding, builder: (_, __) => const OnboardingScreen()),
 
       GoRoute(path: AppRoutes.login, builder: (_, __) => const LoginScreen()),
-      // GoRoute(path: AppRoutes.register, builder: (_, __) => const RegisterScreen()),
+      GoRoute(path: AppRoutes.register, builder: (_, __) => const RegisterScreen()),
       // GoRoute(path: AppRoutes.forgetPassword, builder: (_, __) => const ForgetPasswordScreen()),
       // GoRoute(path: AppRoutes.changePassword, builder: (_, __) => const ChangePasswordScreen()),
       //

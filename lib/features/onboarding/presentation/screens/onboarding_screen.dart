@@ -1,8 +1,10 @@
-// onboarding_screen.dart
+import 'package:fitnies/core/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../providers/onboarding_notifier.dart';
 
 class OnboardingData {
   final String image, title, desc;
@@ -18,18 +20,15 @@ final onboardingPages = [
       'Lorem Ipsum Dolor Sit Amet Consectetur. Eu Urna Ut Gravida Quis Id Pretium Purus, Mauris Massa'),
 ];
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _controller = PageController();
   int _index = 0;
-
-  // static const bg = Color(0xFF17130F);
-  // static const orange = Color(0xFFE8642C);
 
   @override
   void dispose() {
@@ -37,17 +36,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  void _next() {
-    if (_index == onboardingPages.length - 1) {
-      context.go('/auth/login'); // TODO adjust route
+  void _next(){
+    if (_index == onboardingPages.length - 1){
+      context.go(LoginRoute.path);
       return;
     }
-    _controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _controller.nextPage(duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut);
+
+  }
+  Future<void> _finish() async{
+    await ref.read(onboardingNotifierProvider.notifier).complete();
+    if(mounted) {
+      context.go(LoginRoute.path);
+    }
   }
 
   void _back() {
     if (_index == 0) return;
-    _controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    _controller.previousPage(duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut);
   }
 
   void _skip() {
@@ -77,6 +85,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 onSkip: _skip,
                 onBack: _back,
                 onNext: _next,
+                onFinish: _finish,
+
               ),
             ),
           ],
@@ -89,7 +99,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class _Page extends StatelessWidget {
   final OnboardingData data;
   final int index, total;
-  final VoidCallback onSkip, onBack, onNext;
+  final VoidCallback onSkip, onBack, onNext, onFinish;
 
   const _Page({
     required this.data,
@@ -98,9 +108,10 @@ class _Page extends StatelessWidget {
     required this.onSkip,
     required this.onBack,
     required this.onNext,
+    required this.onFinish
   });
 
-  static const orange = Color(0xFFE8642C);
+  // static const orange = Color(0xFFE8642C);
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +175,7 @@ class _Page extends StatelessWidget {
                             height: 5,
                             width: index == i ? 16 : 5,
                             decoration: BoxDecoration(
-                              color: index == i ? orange : Colors.white38,
+                              color: index == i ? AppColors.orange : Colors.white38,
                               borderRadius: BorderRadius.circular(3),
                             ),
                           ),
@@ -190,14 +201,18 @@ class _Page extends StatelessWidget {
                         ],
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: onNext,
+                            onPressed: () {
+                              isLast ? onFinish() : onNext();
+
+                            },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: orange,
+                              backgroundColor: AppColors.orange,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
-                            child: Text(isLast ? 'DO IT' : 'Next', style: const TextStyle(fontSize: 13)),
+                            child: Text(isLast ? 'DO IT' : 'Next',
+                                style: const TextStyle(fontSize: 13)),
                           ),
                         ),
                       ],
